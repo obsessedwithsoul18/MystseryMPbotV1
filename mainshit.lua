@@ -1,13 +1,14 @@
-local CONFIG = {
-    BOT_ID = 1,
-    MODE = "deposit",
-    API_BASE = "https://mysterymp.shop/api",
-    BOT_TOKEN = "BCFGHk,lnjgNHBUJIIBNJHIBBbjikbuiyugtfvuyVHJKbdghjAVdhujNHJKOVTGY&VbdjiopaSbdfty7a8vIJBK",
-    ANTI_KICK = true,
-    ANTI_AFK = true,
-    POLL_INTERVAL = 8,
-    DEBUG = true
-}
+local function MysteryMPBot(config)
+    local CONFIG = config or {
+        BOT_ID = 1,
+        MODE = "deposit",
+        API_BASE = "https://mysterymp.shop/api",
+        BOT_TOKEN = "BCFGHk,lnjgNHBUJIIBNJHIBBbjikbuiyugtfvuyVHJKbdghjAVdhujNHJKOVTGY&VbdjiopaSbdfty7a8vIJBK",
+        ANTI_KICK = true,
+        ANTI_AFK = true,
+        POLL_INTERVAL = 8,
+        DEBUG = true
+    }
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -561,36 +562,39 @@ local function SetupRemoteControl()
 end
 
 local function Init()
-    Log("====================================")
-    Log(string.format("  MYSTERY MP BOT #%d", CONFIG.BOT_ID))
-    Log("  Loading...")
-    Log("====================================")
+        Log("====================================")
+        Log(string.format("  MYSTERY MP BOT #%d", CONFIG.BOT_ID))
+        Log("  Loading...")
+        Log("====================================")
 
-    if not game:IsLoaded() then game.Loaded:Wait() end
-    repeat task.wait(0.5) until LP and LP.Name ~= nil
+        if not game:IsLoaded() then game.Loaded:Wait() end
+        repeat task.wait(0.5) until LP and LP.Name ~= nil
 
-    Log(string.format("Connected as: %s (%d)", LP.Name, LP.UserId))
-    Log(string.format("Server: %s", game.JobId))
-    Log(string.format("Mode: %s", CONFIG.MODE:upper()))
+        Log(string.format("Connected as: %s (%d)", LP.Name, LP.UserId))
+        Log(string.format("Server: %s", game.JobId))
+        Log(string.format("Mode: %s", CONFIG.MODE:upper()))
 
-    SetupAntiKick()
-    StayInServer()
-    SetupRemoteControl()
+        SetupAntiKick()
+        StayInServer()
+        SetupRemoteControl()
 
-    spawn(TradeDetectionLoop)
-    spawn(WithdrawalPollLoop)
+        spawn(TradeDetectionLoop)
+        spawn(WithdrawalPollLoop)
 
-    Log("Bot is LIVE — waiting for trades")
-end
-
-local function Boot()
-    local ok, err = pcall(Init)
-    if not ok then
-        warn("[MYSTERY-MP] CRASH: " .. tostring(err))
-        warn("[MYSTERY-MP] Restarting in 10 seconds...")
-        task.wait(10)
-        Boot()
+        Log("Bot is LIVE — waiting for trades")
     end
+
+    local function Boot()
+        local ok, err = pcall(Init)
+        if not ok then
+            warn("[MYSTERY-MP] CRASH: " .. tostring(err))
+            warn("[MYSTERY-MP] Restarting in 10 seconds...")
+            task.wait(10)
+            Boot()
+        end
+    end
+
+    Boot()
 end
 
 Boot()
